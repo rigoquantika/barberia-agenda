@@ -546,7 +546,7 @@ async function confirmarCita() {
     try {
       const { data: citaGuardada } = await db.from('citas').select('id').eq('cliente_id', clienteId).eq('fecha', estado.fecha).eq('hora_inicio', estado.hora + ':00').single();
       if(citaGuardada) {
-        fetch('http://localhost:3000/api/confirmar', {
+        fetch('https://barberia-agenda-production.up.railway.app/api/confirmar', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({ cita_id: citaGuardada.id })
