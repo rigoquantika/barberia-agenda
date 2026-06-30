@@ -1,0 +1,16 @@
+{
+  "name": "barberapp-servidor",
+  "version": "1.0.0",
+  "description": "Servidor de notificaciones WhatsApp para BarberApp",
+  "main": "servidor.js",
+  "scripts": {
+    "start": "node servidor.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "twilio": "^5.2.2",
+    "@supabase/supabase-js": "^2.45.4",
+    "node-cron": "^3.0.3",
+    "dotenv": "^16.4.5"
+  }
+}
