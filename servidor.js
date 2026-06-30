@@ -262,7 +262,7 @@ app.get('/test-wa', async (req, res) => {
 });
 
 // ─── ARRANQUE ─────────────────────────────────────────────────
-app.listen(CONFIG.PORT, () => {
+app.listen(CONFIG.PORT, '0.0.0.0', () => {
   console.log(`
 ╔════════════════════════════════════════╗
 ║   💈 BarberApp - Servidor activo       ║
