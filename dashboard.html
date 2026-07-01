@@ -7,409 +7,194 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --bg: #0a0a0a;
-  --surface: #111111;
-  --surface2: #1a1a1a;
-  --border: #222222;
-  --dorado: #c9a84c;
-  --dorado-dim: rgba(201,168,76,0.12);
-  --crema: #f0ebe0;
-  --gris: #666666;
-  --gris2: #444444;
-  --verde: #2ecc71;
-  --rojo: #e74c3c;
-  --azul: #3498db;
-  --morado: #9b59b6;
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --naranja:#FF6B35;
+  --naranja-dark:#e55a26;
+  --naranja-glow:rgba(255,107,53,0.2);
+  --naranja-mid:rgba(255,107,53,0.12);
+  --surface:rgba(12,12,12,0.82);
+  --surface2:rgba(20,20,20,0.9);
+  --borde:rgba(255,255,255,0.08);
+  --borde-naranja:rgba(255,107,53,0.35);
+  --texto:rgba(255,255,255,0.92);
+  --gris:rgba(255,255,255,0.4);
+  --verde:#2ecc71;
+  --rojo:#e74c3c;
+  --azul:#3498db;
+  --morado:#9b59b6;
 }
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#0a0a0a;color:var(--texto);min-height:100vh;}
 
-body {
-  font-family: 'Inter', sans-serif;
-  background: var(--bg);
-  color: var(--crema);
-  min-height: 100vh;
+/* BG */
+.bg-image{
+  position:fixed;inset:0;
+  background-image:url('https://barberia-agenda-lime.vercel.app/barberapp_1.jpg');
+  background-size:cover;background-position:center;z-index:0;
+}
+.bg-image::after{
+  content:'';position:absolute;inset:0;
+  background:rgba(0,0,0,0.78);
 }
 
 /* SIDEBAR */
-.sidebar {
-  position: fixed;
-  left: 0; top: 0; bottom: 0;
-  width: 220px;
-  background: var(--surface);
-  border-right: 1px solid var(--border);
-  padding: 28px 0;
-  display: flex;
-  flex-direction: column;
-  z-index: 100;
+.sidebar{
+  position:fixed;left:0;top:0;bottom:0;width:220px;
+  background:rgba(8,8,8,0.92);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-right:1px solid var(--borde);
+  padding:28px 0;display:flex;flex-direction:column;z-index:100;
 }
+.sidebar-logo{padding:0 22px 24px;border-bottom:1px solid var(--borde);}
+.logo-wrap{display:flex;align-items:center;gap:10px;}
+.logo-icon{width:36px;height:36px;background:var(--naranja);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 14px var(--naranja-glow);}
+.logo-name{font-size:17px;font-weight:800;color:white;letter-spacing:-0.3px;}
+.logo-sub{font-size:10px;color:var(--gris);letter-spacing:2px;text-transform:uppercase;margin-top:2px;padding-left:46px;}
 
-.sidebar-logo {
-  padding: 0 24px 28px;
-  border-bottom: 1px solid var(--border);
+.sidebar-nav{padding:18px 10px;flex:1;display:flex;flex-direction:column;gap:3px;}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:10px;
+  cursor:pointer;font-size:13px;font-weight:500;color:var(--gris);
+  transition:all 0.15s;border:none;background:none;width:100%;text-align:left;
+  font-family:'Plus Jakarta Sans',sans-serif;
 }
-.sidebar-logo-icon {
-  font-size: 28px;
-  margin-bottom: 6px;
-}
-.sidebar-logo-name {
-  font-family: 'Playfair Display', serif;
-  font-size: 18px;
-  color: var(--crema);
-}
-.sidebar-logo-sub {
-  font-size: 10px;
-  color: var(--gris);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:white;}
+.nav-item.active{background:var(--naranja-mid);color:var(--naranja);border:1px solid var(--borde-naranja);}
+.nav-icon{font-size:15px;width:20px;text-align:center;}
 
-.sidebar-nav {
-  padding: 20px 12px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 13px;
-  color: var(--gris);
-  transition: all 0.15s;
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
-}
-.nav-item:hover { background: var(--surface2); color: var(--crema); }
-.nav-item.active { background: var(--dorado-dim); color: var(--dorado); }
-.nav-icon { font-size: 16px; width: 20px; text-align: center; }
-
-.sidebar-bottom {
-  padding: 20px 24px;
-  border-top: 1px solid var(--border);
-}
-.db-status {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 11px;
-  color: var(--gris);
-}
-.db-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--gris2);
-  transition: background 0.3s;
-}
-.db-dot.on { background: var(--verde); box-shadow: 0 0 6px var(--verde); }
+.sidebar-bottom{padding:18px 22px;border-top:1px solid var(--borde);}
+.db-status{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--gris);}
+.db-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.15);}
+.db-dot.on{background:var(--verde);box-shadow:0 0 6px var(--verde);}
 
 /* MAIN */
-.main {
-  margin-left: 220px;
-  padding: 32px;
-  min-height: 100vh;
-}
+.main{margin-left:220px;padding:28px;min-height:100vh;position:relative;z-index:1;}
 
-/* TOPBAR */
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 32px;
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+.page-title{font-size:24px;font-weight:800;color:white;letter-spacing:-0.5px;}
+.page-sub{font-size:13px;color:var(--gris);margin-top:2px;}
+.refresh-btn{
+  background:var(--surface2);backdrop-filter:blur(10px);
+  border:1px solid var(--borde);color:var(--gris);
+  padding:8px 16px;border-radius:10px;cursor:pointer;
+  font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;
+  transition:all 0.2s;display:flex;align-items:center;gap:6px;
 }
-.page-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 26px;
-  color: var(--crema);
-}
-.page-sub { font-size: 13px; color: var(--gris); margin-top: 2px; }
-
-.refresh-btn {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  color: var(--gris);
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 13px;
-  font-family: 'Inter', sans-serif;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.refresh-btn:hover { border-color: var(--dorado); color: var(--dorado); }
+.refresh-btn:hover{border-color:var(--naranja);color:var(--naranja);}
 
 /* TABS */
-.tabs {
-  display: flex;
-  gap: 4px;
-  margin-bottom: 28px;
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 0;
+.tabs{display:flex;gap:2px;margin-bottom:24px;border-bottom:1px solid var(--borde);padding-bottom:0;}
+.tab{
+  padding:10px 16px;font-size:13px;color:var(--gris);cursor:pointer;
+  border:none;background:none;font-family:'Plus Jakarta Sans',sans-serif;font-weight:500;
+  border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s;
 }
-.tab {
-  padding: 10px 18px;
-  font-size: 13px;
-  color: var(--gris);
-  cursor: pointer;
-  border: none;
-  background: none;
-  font-family: 'Inter', sans-serif;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
-  transition: all 0.2s;
-}
-.tab:hover { color: var(--crema); }
-.tab.active { color: var(--dorado); border-bottom-color: var(--dorado); }
+.tab:hover{color:white;}
+.tab.active{color:var(--naranja);border-bottom-color:var(--naranja);}
 
-/* PANEL */
-.panel { display: none; }
-.panel.active { display: block; animation: fadeIn 0.25s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+/* PANELS */
+.panel{display:none;}
+.panel.active{display:block;animation:fadeIn 0.25s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
 
-/* KPI GRID */
-.kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 24px;
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.kpi-card{
+  background:var(--surface);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border:1px solid var(--borde);border-radius:14px;padding:18px;position:relative;overflow:hidden;
 }
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.kpi-card.gold::before{background:var(--naranja);}
+.kpi-card.green::before{background:var(--verde);}
+.kpi-card.blue::before{background:var(--azul);}
+.kpi-card.purple::before{background:var(--morado);}
+.kpi-label{font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
+.kpi-value{font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:600;color:white;line-height:1;}
+.kpi-value.gold{color:var(--naranja);}
+.kpi-sub{font-size:11px;color:var(--gris);margin-top:6px;}
 
-.kpi-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px;
-  position: relative;
-  overflow: hidden;
+/* CHARTS */
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+.chart-card{
+  background:var(--surface);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border:1px solid var(--borde);border-radius:14px;padding:18px;
 }
-.kpi-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-}
-.kpi-card.gold::before { background: var(--dorado); }
-.kpi-card.green::before { background: var(--verde); }
-.kpi-card.blue::before { background: var(--azul); }
-.kpi-card.purple::before { background: var(--morado); }
+.chart-title{font-size:13px;font-weight:700;color:white;margin-bottom:3px;}
+.chart-sub{font-size:11px;color:var(--gris);margin-bottom:14px;}
+.chart-wrap{position:relative;height:190px;}
 
-.kpi-label { font-size: 11px; color: var(--gris); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
-.kpi-value { font-family: 'JetBrains Mono', monospace; font-size: 32px; font-weight: 600; color: var(--crema); line-height: 1; }
-.kpi-value.gold { color: var(--dorado); }
-.kpi-sub { font-size: 11px; color: var(--gris); margin-top: 6px; }
+/* TABLE */
+.table-card{
+  background:var(--surface);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border:1px solid var(--borde);border-radius:14px;overflow:hidden;margin-bottom:20px;
+}
+.table-header{padding:14px 18px;border-bottom:1px solid var(--borde);display:flex;align-items:center;justify-content:space-between;}
+.table-title{font-size:13px;font-weight:700;color:white;}
+.table-count{font-size:11px;color:var(--gris);}
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;padding:10px 18px;font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--borde);background:rgba(255,255,255,0.02);}
+td{padding:12px 18px;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.03);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,0.02);}
 
-/* CHARTS GRID */
-.charts-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.chart-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px;
-}
-.chart-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--crema);
-  margin-bottom: 4px;
-}
-.chart-sub { font-size: 11px; color: var(--gris); margin-bottom: 16px; }
-.chart-wrap { position: relative; height: 200px; }
-
-/* TABLA */
-.table-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  overflow: hidden;
-  margin-bottom: 24px;
-}
-.table-header {
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.table-title { font-size: 13px; font-weight: 600; color: var(--crema); }
-.table-count { font-size: 11px; color: var(--gris); }
-
-table { width: 100%; border-collapse: collapse; }
-th {
-  text-align: left;
-  padding: 10px 20px;
-  font-size: 11px;
-  color: var(--gris);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border-bottom: 1px solid var(--border);
-  background: var(--surface2);
-}
-td {
-  padding: 12px 20px;
-  font-size: 13px;
-  border-bottom: 1px solid #161616;
-}
-tr:last-child td { border-bottom: none; }
-tr:hover td { background: #131313; }
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 8px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 500;
-}
-.badge.confirmada { background: rgba(52,152,219,0.15); color: var(--azul); }
-.badge.completada { background: rgba(46,204,113,0.15); color: var(--verde); }
-.badge.cancelada { background: rgba(231,76,60,0.15); color: var(--rojo); }
-.badge.no_asistio { background: rgba(102,102,102,0.15); color: var(--gris); }
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600;}
+.badge.confirmada{background:rgba(52,152,219,0.15);color:var(--azul);}
+.badge.completada{background:rgba(46,204,113,0.15);color:var(--verde);}
+.badge.cancelada{background:rgba(231,76,60,0.15);color:var(--rojo);}
+.badge.no_asistio{background:rgba(255,255,255,0.06);color:var(--gris);}
 
 /* AGENDA */
-.agenda-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 2px;
-  margin-bottom: 16px;
-}
-.agenda-dia-nombre {
-  text-align: center;
-  font-size: 11px;
-  color: var(--gris);
-  padding: 8px 0;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-.agenda-slot {
-  min-height: 60px;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 6px;
-}
-.agenda-slot.hoy { border-color: var(--dorado); }
-.agenda-slot-fecha {
-  font-size: 11px;
-  color: var(--gris);
-  margin-bottom: 4px;
-  font-family: 'JetBrains Mono', monospace;
-}
-.agenda-cita {
-  background: var(--dorado-dim);
-  border-left: 2px solid var(--dorado);
-  border-radius: 3px;
-  padding: 3px 5px;
-  font-size: 10px;
-  color: var(--dorado);
-  margin-bottom: 2px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* EMPTY STATE */
-.empty {
-  text-align: center;
-  padding: 40px 20px;
-  color: var(--gris);
-  font-size: 13px;
-}
-.empty-icon { font-size: 32px; margin-bottom: 10px; }
-
-/* LOADING */
-.loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 40px;
-  color: var(--gris);
-  font-size: 13px;
-}
-.spin {
-  width: 16px; height: 16px;
-  border: 2px solid var(--border);
-  border-top-color: var(--dorado);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
+.agenda-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:14px;}
+.agenda-dia-nombre{text-align:center;font-size:11px;color:var(--gris);padding:6px 0;text-transform:uppercase;letter-spacing:0.5px;}
+.agenda-slot{min-height:70px;background:rgba(255,255,255,0.03);border:1px solid var(--borde);border-radius:8px;padding:6px;}
+.agenda-slot.hoy{border-color:var(--naranja);}
+.agenda-slot-fecha{font-size:10px;color:var(--gris);margin-bottom:4px;font-family:'JetBrains Mono',monospace;}
+.agenda-cita{background:var(--naranja-mid);border-left:2px solid var(--naranja);border-radius:3px;padding:3px 5px;font-size:10px;color:var(--naranja);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
 /* CLIENTES */
-.clientes-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 12px;
-}
-.cliente-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 16px;
-}
-.cliente-nombre { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-.cliente-wa { font-size: 12px; color: var(--gris); font-family: 'JetBrains Mono', monospace; }
-.cliente-stats {
-  display: flex;
-  gap: 16px;
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border);
-}
-.cliente-stat { font-size: 11px; color: var(--gris); }
-.cliente-stat span { display: block; font-size: 16px; font-weight: 600; color: var(--crema); font-family: 'JetBrains Mono', monospace; }
+.clientes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;}
+.cliente-card{background:var(--surface);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--borde);border-radius:12px;padding:16px;}
+.cliente-nombre{font-size:14px;font-weight:700;margin-bottom:3px;}
+.cliente-wa{font-size:12px;color:var(--gris);font-family:'JetBrains Mono',monospace;}
+.cliente-stats{display:flex;gap:16px;margin-top:12px;padding-top:12px;border-top:1px solid var(--borde);}
+.cliente-stat{font-size:11px;color:var(--gris);}
+.cliente-stat span{display:block;font-size:18px;font-weight:700;color:white;font-family:'JetBrains Mono',monospace;}
 
-@media (max-width: 900px) {
-  .sidebar { display: none; }
-  .main { margin-left: 0; padding: 16px; }
-  .kpi-grid { grid-template-columns: 1fr 1fr; }
-  .charts-grid { grid-template-columns: 1fr; }
-}
+.empty{text-align:center;padding:40px;color:var(--gris);font-size:13px;}
+.empty-icon{font-size:32px;margin-bottom:10px;}
+.loading{display:flex;align-items:center;justify-content:center;gap:8px;padding:40px;color:var(--gris);font-size:13px;}
+.spin{width:16px;height:16px;border:2px solid var(--borde);border-top-color:var(--naranja);border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+@media(max-width:900px){.sidebar{display:none;}.main{margin-left:0;padding:16px;}.kpi-grid{grid-template-columns:1fr 1fr;}.charts-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
+<div class="bg-image"></div>
+
 <div class="sidebar">
   <div class="sidebar-logo">
-    <div class="sidebar-logo-icon">💈</div>
-    <div class="sidebar-logo-name">BarberApp</div>
-    <div class="sidebar-logo-sub">Dashboard</div>
+    <div class="logo-wrap">
+      <div class="logo-icon">💈</div>
+      <div class="logo-name">BarberApp</div>
+    </div>
+    <div class="logo-sub">Dashboard</div>
   </div>
   <nav class="sidebar-nav">
-    <button class="nav-item active" onclick="showTab('resumen')"><span class="nav-icon">📊</span> Resumen</button>
-    <button class="nav-item" onclick="showTab('agenda')"><span class="nav-icon">📅</span> Agenda</button>
-    <button class="nav-item" onclick="showTab('citas')"><span class="nav-icon">✂️</span> Citas</button>
-    <button class="nav-item" onclick="showTab('clientes')"><span class="nav-icon">👤</span> Clientes</button>
-    <button class="nav-item" onclick="showTab('analytics')"><span class="nav-icon">📈</span> Analytics</button>
+    <button class="nav-item active" onclick="showTab('resumen',this)"><span class="nav-icon">📊</span> Resumen</button>
+    <button class="nav-item" onclick="showTab('agenda',this)"><span class="nav-icon">📅</span> Agenda</button>
+    <button class="nav-item" onclick="showTab('citas',this)"><span class="nav-icon">✂️</span> Citas</button>
+    <button class="nav-item" onclick="showTab('clientes',this)"><span class="nav-icon">👤</span> Clientes</button>
+    <button class="nav-item" onclick="showTab('analytics',this)"><span class="nav-icon">📈</span> Analytics</button>
   </nav>
   <div class="sidebar-bottom">
-    <div class="db-status">
-      <div class="db-dot" id="dbDot"></div>
-      <span id="dbStatus">Conectando...</span>
-    </div>
+    <div class="db-status"><div class="db-dot" id="dbDot"></div><span id="dbStatus">Conectando...</span></div>
   </div>
 </div>
 
-<!-- MAIN -->
 <div class="main">
   <div class="topbar">
     <div>
@@ -419,367 +204,204 @@ tr:hover td { background: #131313; }
     <button class="refresh-btn" onclick="cargarTodo()">↻ Actualizar</button>
   </div>
 
-  <!-- TAB: RESUMEN -->
+  <!-- RESUMEN -->
   <div class="panel active" id="panel-resumen">
     <div class="kpi-grid">
-      <div class="kpi-card gold">
-        <div class="kpi-label">Citas hoy</div>
-        <div class="kpi-value gold" id="kpiHoy">—</div>
-        <div class="kpi-sub" id="kpiHoySub">cargando...</div>
-      </div>
-      <div class="kpi-card green">
-        <div class="kpi-label">Citas este mes</div>
-        <div class="kpi-value" id="kpiMes">—</div>
-        <div class="kpi-sub" id="kpiMesSub">cargando...</div>
-      </div>
-      <div class="kpi-card blue">
-        <div class="kpi-label">Clientes totales</div>
-        <div class="kpi-value" id="kpiClientes">—</div>
-        <div class="kpi-sub">registrados en el sistema</div>
-      </div>
-      <div class="kpi-card purple">
-        <div class="kpi-label">Tasa de asistencia</div>
-        <div class="kpi-value" id="kpiAsistencia">—</div>
-        <div class="kpi-sub">completadas vs agendadas</div>
-      </div>
+      <div class="kpi-card gold"><div class="kpi-label">Citas hoy</div><div class="kpi-value gold" id="kpiHoy">—</div><div class="kpi-sub" id="kpiHoySub">cargando...</div></div>
+      <div class="kpi-card green"><div class="kpi-label">Citas este mes</div><div class="kpi-value" id="kpiMes">—</div><div class="kpi-sub" id="kpiMesSub">cargando...</div></div>
+      <div class="kpi-card blue"><div class="kpi-label">Clientes totales</div><div class="kpi-value" id="kpiClientes">—</div><div class="kpi-sub">registrados</div></div>
+      <div class="kpi-card purple"><div class="kpi-label">Tasa de asistencia</div><div class="kpi-value" id="kpiAsistencia">—</div><div class="kpi-sub">completadas vs agendadas</div></div>
     </div>
-
     <div class="charts-grid">
-      <div class="chart-card">
-        <div class="chart-title">Citas por día (últimos 14 días)</div>
-        <div class="chart-sub">Tendencia de demanda reciente</div>
-        <div class="chart-wrap"><canvas id="chartDias"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">Servicios más populares</div>
-        <div class="chart-sub">Distribución por tipo de servicio</div>
-        <div class="chart-wrap"><canvas id="chartServicios"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">Horas pico</div>
-        <div class="chart-sub">Demanda por franja horaria</div>
-        <div class="chart-wrap"><canvas id="chartHoras"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">Estado de citas</div>
-        <div class="chart-sub">Confirmadas, completadas, canceladas</div>
-        <div class="chart-wrap"><canvas id="chartEstados"></canvas></div>
-      </div>
+      <div class="chart-card"><div class="chart-title">Citas por día (14 días)</div><div class="chart-sub">Tendencia reciente</div><div class="chart-wrap"><canvas id="chartDias"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">Servicios populares</div><div class="chart-sub">Distribución por servicio</div><div class="chart-wrap"><canvas id="chartServicios"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">Horas pico</div><div class="chart-sub">Demanda por franja horaria</div><div class="chart-wrap"><canvas id="chartHoras"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">Estado de citas</div><div class="chart-sub">Confirmadas, completadas, canceladas</div><div class="chart-wrap"><canvas id="chartEstados"></canvas></div></div>
     </div>
   </div>
 
-  <!-- TAB: AGENDA -->
+  <!-- AGENDA -->
   <div class="panel" id="panel-agenda">
     <div class="table-card" style="padding:20px">
       <div class="chart-title" style="margin-bottom:16px">Semana actual</div>
-      <div class="agenda-grid" id="agendaGrid">
-        <div class="loading"><div class="spin"></div> Cargando agenda...</div>
-      </div>
+      <div class="agenda-grid" id="agendaGrid"><div class="loading"><div class="spin"></div> Cargando agenda...</div></div>
     </div>
   </div>
 
-  <!-- TAB: CITAS -->
+  <!-- CITAS -->
   <div class="panel" id="panel-citas">
     <div class="table-card">
-      <div class="table-header">
-        <div class="table-title">Todas las citas</div>
-        <div class="table-count" id="citasCount">cargando...</div>
-      </div>
+      <div class="table-header"><div class="table-title">Todas las citas</div><div class="table-count" id="citasCount">cargando...</div></div>
       <div id="citasTabla"><div class="loading"><div class="spin"></div> Cargando...</div></div>
     </div>
   </div>
 
-  <!-- TAB: CLIENTES -->
+  <!-- CLIENTES -->
   <div class="panel" id="panel-clientes">
-    <div class="clientes-grid" id="clientesGrid">
-      <div class="loading"><div class="spin"></div> Cargando clientes...</div>
-    </div>
+    <div class="clientes-grid" id="clientesGrid"><div class="loading"><div class="spin"></div> Cargando clientes...</div></div>
   </div>
 
-  <!-- TAB: ANALYTICS -->
+  <!-- ANALYTICS -->
   <div class="panel" id="panel-analytics">
-    <div class="kpi-grid" style="grid-template-columns: repeat(3,1fr)">
-      <div class="kpi-card gold">
-        <div class="kpi-label">Servicio estrella</div>
-        <div class="kpi-value gold" style="font-size:20px" id="anaServicio">—</div>
-        <div class="kpi-sub" id="anaServicioSub">el más solicitado</div>
-      </div>
-      <div class="kpi-card green">
-        <div class="kpi-label">Hora pico</div>
-        <div class="kpi-value" style="font-size:24px" id="anaHora">—</div>
-        <div class="kpi-sub">más citas en ese horario</div>
-      </div>
-      <div class="kpi-card blue">
-        <div class="kpi-label">Día más ocupado</div>
-        <div class="kpi-value" style="font-size:20px" id="anaDia">—</div>
-        <div class="kpi-sub">día de la semana</div>
-      </div>
+    <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
+      <div class="kpi-card gold"><div class="kpi-label">Servicio estrella</div><div class="kpi-value gold" style="font-size:18px" id="anaServicio">—</div><div class="kpi-sub" id="anaServicioSub">el más solicitado</div></div>
+      <div class="kpi-card green"><div class="kpi-label">Hora pico</div><div class="kpi-value" style="font-size:22px" id="anaHora">—</div><div class="kpi-sub">más citas en ese horario</div></div>
+      <div class="kpi-card blue"><div class="kpi-label">Día más ocupado</div><div class="kpi-value" style="font-size:22px" id="anaDia">—</div><div class="kpi-sub">día de la semana</div></div>
     </div>
     <div class="charts-grid" style="grid-template-columns:1fr">
-      <div class="chart-card">
-        <div class="chart-title">Citas por día de la semana</div>
-        <div class="chart-sub">¿Cuáles días son más ocupados?</div>
-        <div class="chart-wrap" style="height:240px"><canvas id="chartDiaSemana"></canvas></div>
-      </div>
+      <div class="chart-card"><div class="chart-title">Citas por día de la semana</div><div class="chart-sub">¿Cuáles días son más ocupados?</div><div class="chart-wrap" style="height:220px"><canvas id="chartDiaSemana"></canvas></div></div>
     </div>
-    <div class="kpi-grid" style="grid-template-columns: repeat(2,1fr)">
-      <div class="kpi-card green">
-        <div class="kpi-label">Clientes recurrentes</div>
-        <div class="kpi-value" id="anaRecurrentes">—</div>
-        <div class="kpi-sub">con más de 1 cita</div>
-      </div>
-      <div class="kpi-card purple">
-        <div class="kpi-label">Tasa de no-show</div>
-        <div class="kpi-value" id="anaNoShow">—</div>
-        <div class="kpi-sub">clientes que no asistieron</div>
-      </div>
+    <div class="kpi-grid" style="grid-template-columns:repeat(2,1fr)">
+      <div class="kpi-card green"><div class="kpi-label">Clientes recurrentes</div><div class="kpi-value" id="anaRecurrentes">—</div><div class="kpi-sub">con más de 1 cita</div></div>
+      <div class="kpi-card purple"><div class="kpi-label">Tasa de no-show</div><div class="kpi-value" id="anaNoShow">—</div><div class="kpi-sub">clientes que no asistieron</div></div>
     </div>
   </div>
 </div>
 
 <script>
-// ─── SUPABASE ─────────────────────────────────────────────────
-const { createClient } = supabase;
-const db = createClient(
-  'https://ncozyzksrncoidlkcrfj.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jb3p5emtzcm5jb2lkbGtjcmZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1MDM2NjIsImV4cCI6MjA5ODA3OTY2Mn0.LrFIkel6-H7zcwujuJnXJEzTtIsWDDT0uA6N9j-vq2k'
-);
+const{createClient}=supabase;
+const db=createClient('https://ncozyzksrncoidlkcrfj.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jb3p5emtzcm5jb2lkbGtjcmZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1MDM2NjIsImV4cCI6MjA5ODA3OTY2Mn0.LrFIkel6-H7zcwujuJnXJEzTtIsWDDT0uA6N9j-vq2k');
+const DIAS=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+const MESES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+let citas=[],clientes=[],charts={};
 
-const DIAS = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-const MESES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-const CHART_DEFAULTS = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#666', font: { size: 11 } } } }, scales: { x: { ticks: { color: '#666', font: { size: 10 } }, grid: { color: '#1a1a1a' } }, y: { ticks: { color: '#666', font: { size: 10 } }, grid: { color: '#1a1a1a' } } } };
-
-let citas = [], clientes = [], servicios = [];
-let charts = {};
-
-// ─── INIT ─────────────────────────────────────────────────────
-async function init() {
-  try {
-    const [rc, rk, rs] = await Promise.all([
-      db.from('citas').select('*, clientes(nombre,whatsapp), servicios(nombre,emoji,duracion_min)').order('fecha', { ascending: false }),
-      db.from('clientes').select('*').order('creado_en', { ascending: false }),
-      db.from('servicios').select('*').eq('activo', true)
+async function init(){
+  try{
+    const[rc,rk]=await Promise.all([
+      db.from('citas').select('*,clientes(nombre,whatsapp),servicios(nombre,emoji,duracion_min)').order('fecha',{ascending:false}),
+      db.from('clientes').select('*').order('creado_en',{ascending:false})
     ]);
-    if (rc.error || rk.error || rs.error) throw new Error('Error de conexión');
-    citas = rc.data || [];
-    clientes = rk.data || [];
-    servicios = rs.data || [];
+    if(rc.error||rk.error)throw new Error('Error');
+    citas=rc.data||[];clientes=rk.data||[];
     document.getElementById('dbDot').classList.add('on');
-    document.getElementById('dbStatus').textContent = 'Conectado';
+    document.getElementById('dbStatus').textContent='Conectado';
     renderTodo();
-  } catch(e) {
-    document.getElementById('dbStatus').textContent = 'Sin conexión';
-    console.error(e);
-  }
+  }catch(e){document.getElementById('dbStatus').textContent='Sin conexión';}
 }
 
-function renderTodo() {
-  renderKPIs();
-  renderCharts();
-  renderAgenda();
-  renderCitas();
-  renderClientes();
-  renderAnalytics();
+function renderTodo(){renderKPIs();renderCharts();renderAgenda();renderCitas();renderClientes();renderAnalytics();}
+
+function renderKPIs(){
+  const hoy=new Date().toISOString().split('T')[0];
+  const mes=hoy.slice(0,7);
+  const citasHoy=citas.filter(c=>c.fecha===hoy);
+  const citasMes=citas.filter(c=>c.fecha?.startsWith(mes));
+  const completadas=citas.filter(c=>c.estado==='completada').length;
+  document.getElementById('kpiHoy').textContent=citasHoy.length;
+  document.getElementById('kpiHoySub').textContent=`${citasHoy.filter(c=>c.estado==='confirmada').length} confirmadas`;
+  document.getElementById('kpiMes').textContent=citasMes.length;
+  document.getElementById('kpiMesSub').textContent=`en ${MESES[new Date().getMonth()]}`;
+  document.getElementById('kpiClientes').textContent=clientes.length;
+  document.getElementById('kpiAsistencia').textContent=citas.length?Math.round(completadas/citas.length*100)+'%':'—';
 }
 
-// ─── KPIs ─────────────────────────────────────────────────────
-function renderKPIs() {
-  const hoy = new Date().toISOString().split('T')[0];
-  const mesActual = hoy.slice(0,7);
+function renderCharts(){
+  const dias14=[],counts14=[];
+  for(let i=13;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const s=d.toISOString().split('T')[0];dias14.push(`${d.getDate()}/${d.getMonth()+1}`);counts14.push(citas.filter(c=>c.fecha===s).length);}
+  buildChart('chartDias','line',dias14,[{label:'Citas',data:counts14,borderColor:'#FF6B35',backgroundColor:'rgba(255,107,53,0.1)',tension:0.4,fill:true,pointRadius:3}]);
 
-  const citasHoy = citas.filter(c => c.fecha === hoy);
-  const citasMes = citas.filter(c => c.fecha?.startsWith(mesActual));
-  const completadas = citas.filter(c => c.estado === 'completada').length;
-  const total = citas.length;
+  const servCount={};
+  citas.forEach(c=>{const n=c.servicios?.nombre||'Otro';servCount[n]=(servCount[n]||0)+1;});
+  buildChart('chartServicios','doughnut',Object.keys(servCount),[{data:Object.values(servCount),backgroundColor:['#FF6B35','#3498db','#2ecc71','#9b59b6','#e74c3c','#f39c12'],borderWidth:0}],false);
 
-  document.getElementById('kpiHoy').textContent = citasHoy.length;
-  document.getElementById('kpiHoySub').textContent = `${citasHoy.filter(c=>c.estado==='confirmada').length} confirmadas`;
-  document.getElementById('kpiMes').textContent = citasMes.length;
-  document.getElementById('kpiMesSub').textContent = `en ${MESES[new Date().getMonth()]}`;
-  document.getElementById('kpiClientes').textContent = clientes.length;
-  document.getElementById('kpiAsistencia').textContent = total ? Math.round(completadas/total*100)+'%' : '—';
+  const horaCount={};
+  for(let h=8;h<20;h++)horaCount[`${String(h).padStart(2,'0')}:00`]=0;
+  citas.forEach(c=>{if(c.hora_inicio){const h=c.hora_inicio.slice(0,3)+'00';if(horaCount[h]!==undefined)horaCount[h]++;}});
+  buildChart('chartHoras','bar',Object.keys(horaCount),[{label:'Citas',data:Object.values(horaCount),backgroundColor:'rgba(255,107,53,0.5)',borderColor:'#FF6B35',borderWidth:1,borderRadius:4}]);
+
+  const estados={confirmada:0,completada:0,cancelada:0,no_asistio:0};
+  citas.forEach(c=>{if(estados[c.estado]!==undefined)estados[c.estado]++;});
+  buildChart('chartEstados','doughnut',['Confirmada','Completada','Cancelada','No asistió'],[{data:Object.values(estados),backgroundColor:['#3498db','#2ecc71','#e74c3c','#555'],borderWidth:0}],false);
 }
 
-// ─── CHARTS ───────────────────────────────────────────────────
-function renderCharts() {
-  // Citas por día (últimos 14 días)
-  const dias14 = [];
-  const counts14 = [];
-  for(let i=13;i>=0;i--) {
-    const d = new Date(); d.setDate(d.getDate()-i);
-    const s = d.toISOString().split('T')[0];
-    dias14.push(`${d.getDate()}/${d.getMonth()+1}`);
-    counts14.push(citas.filter(c=>c.fecha===s).length);
-  }
-  buildChart('chartDias', 'line', dias14, [{ label:'Citas', data: counts14, borderColor:'#c9a84c', backgroundColor:'rgba(201,168,76,0.1)', tension:0.4, fill:true, pointRadius:3 }]);
-
-  // Servicios populares
-  const servCount = {};
-  citas.forEach(c => {
-    const n = c.servicios?.nombre || 'Otro';
-    servCount[n] = (servCount[n]||0)+1;
-  });
-  const servLabels = Object.keys(servCount);
-  const servData = Object.values(servCount);
-  buildChart('chartServicios', 'doughnut', servLabels, [{ data: servData, backgroundColor: ['#c9a84c','#3498db','#2ecc71','#9b59b6','#e74c3c','#f39c12'], borderWidth: 0 }], false);
-
-  // Horas pico
-  const horaCount = {};
-  for(let h=8;h<20;h++) horaCount[`${String(h).padStart(2,'0')}:00`] = 0;
-  citas.forEach(c => {
-    if(c.hora_inicio) {
-      const h = c.hora_inicio.slice(0,5).slice(0,3)+'00';
-      if(horaCount[h]!==undefined) horaCount[h]++;
-    }
-  });
-  buildChart('chartHoras', 'bar', Object.keys(horaCount), [{ label:'Citas', data: Object.values(horaCount), backgroundColor:'rgba(52,152,219,0.6)', borderColor:'#3498db', borderWidth:1, borderRadius:4 }]);
-
-  // Estados
-  const estados = { confirmada:0, completada:0, cancelada:0, no_asistio:0 };
-  citas.forEach(c => { if(estados[c.estado]!==undefined) estados[c.estado]++; });
-  buildChart('chartEstados', 'doughnut',
-    ['Confirmada','Completada','Cancelada','No asistió'],
-    [{ data: Object.values(estados), backgroundColor:['#3498db','#2ecc71','#e74c3c','#666'], borderWidth:0 }], false);
+function buildChart(id,type,labels,datasets,showScales=true){
+  if(charts[id])charts[id].destroy();
+  const ctx=document.getElementById(id)?.getContext('2d');if(!ctx)return;
+  const opts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:!showScales,labels:{color:'rgba(255,255,255,0.4)',font:{size:11},boxWidth:10,padding:10}}}};
+  if(showScales){opts.scales={x:{ticks:{color:'rgba(255,255,255,0.3)',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}},y:{ticks:{color:'rgba(255,255,255,0.3)',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'},beginAtZero:true}};}
+  charts[id]=new Chart(ctx,{type,data:{labels,datasets},options:opts});
 }
 
-function buildChart(id, type, labels, datasets, showScales=true) {
-  if(charts[id]) charts[id].destroy();
-  const ctx = document.getElementById(id)?.getContext('2d');
-  if(!ctx) return;
-  const opts = { responsive:true, maintainAspectRatio:false,
-    plugins:{ legend:{ display: !showScales, labels:{ color:'#666', font:{ size:11 }, boxWidth:10, padding:10 } } } };
-  if(showScales) { opts.scales = { x:{ ticks:{ color:'#555', font:{ size:10 } }, grid:{ color:'#1a1a1a' } }, y:{ ticks:{ color:'#555', font:{ size:10 } }, grid:{ color:'#1a1a1a' }, beginAtZero:true } }; }
-  charts[id] = new Chart(ctx, { type, data:{ labels, datasets }, options: opts });
-}
-
-// ─── AGENDA SEMANAL ───────────────────────────────────────────
-function renderAgenda() {
-  const hoy = new Date();
-  const lunes = new Date(hoy); lunes.setDate(hoy.getDate() - (hoy.getDay()||7) + 1);
-
-  let html = DIAS.map(d=>`<div class="agenda-dia-nombre">${d}</div>`).join('');
-  // Domingo primero
-  const orden = [0,1,2,3,4,5,6];
-  orden.forEach(offset => {
-    const dia = new Date(lunes); dia.setDate(lunes.getDate() + offset - 1);
-    const fStr = dia.toISOString().split('T')[0];
-    const esHoy = fStr === hoy.toISOString().split('T')[0];
-    const citasDia = citas.filter(c=>c.fecha===fStr);
-    html += `<div class="agenda-slot ${esHoy?'hoy':''}">
+function renderAgenda(){
+  const hoy=new Date();
+  const lunes=new Date(hoy);lunes.setDate(hoy.getDate()-(hoy.getDay()||7)+1);
+  let html=DIAS.map(d=>`<div class="agenda-dia-nombre">${d}</div>`).join('');
+  [0,1,2,3,4,5,6].forEach(offset=>{
+    const dia=new Date(lunes);dia.setDate(lunes.getDate()+offset-1);
+    const fStr=dia.toISOString().split('T')[0];
+    const esHoy=fStr===hoy.toISOString().split('T')[0];
+    const citasDia=citas.filter(c=>c.fecha===fStr);
+    html+=`<div class="agenda-slot ${esHoy?'hoy':''}">
       <div class="agenda-slot-fecha">${dia.getDate()}/${dia.getMonth()+1}</div>
-      ${citasDia.map(c=>`<div class="agenda-cita">${c.hora_inicio?.slice(0,5)} ${c.servicios?.emoji||''} ${c.clientes?.nombre?.split(' ')[0]||'Cliente'}</div>`).join('')}
-      ${citasDia.length===0?'<div style="font-size:10px;color:#333">Libre</div>':''}
+      ${citasDia.map(c=>`<div class="agenda-cita">${c.hora_inicio?.slice(0,5)} ${c.clientes?.nombre?.split(' ')[0]||''}</div>`).join('')}
+      ${citasDia.length===0?'<div style="font-size:10px;color:rgba(255,255,255,0.15)">Libre</div>':''}
     </div>`;
   });
-  document.getElementById('agendaGrid').innerHTML = html;
+  document.getElementById('agendaGrid').innerHTML=html;
 }
 
-// ─── TABLA CITAS ──────────────────────────────────────────────
-function renderCitas() {
-  document.getElementById('citasCount').textContent = `${citas.length} registros`;
-  if(!citas.length) {
-    document.getElementById('citasTabla').innerHTML = '<div class="empty"><div class="empty-icon">📋</div>No hay citas registradas aún</div>';
-    return;
-  }
-  const rows = citas.slice(0,50).map(c => {
-    const f = c.fecha ? new Date(c.fecha+'T12:00:00').toLocaleDateString('es-HN',{day:'numeric',month:'short',year:'numeric'}) : '—';
-    return `<tr>
-      <td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#888">${f}</td>
-      <td>${c.hora_inicio?.slice(0,5)||'—'} - ${c.hora_fin?.slice(0,5)||'—'}</td>
-      <td>${c.servicios?.emoji||''} ${c.servicios?.nombre||'—'}</td>
-      <td>${c.clientes?.nombre||'—'}</td>
-      <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#888">${c.clientes?.whatsapp||'—'}</td>
-      <td><span class="badge ${c.estado}">${c.estado?.replace('_',' ')||'—'}</span></td>
-    </tr>`;
+function renderCitas(){
+  document.getElementById('citasCount').textContent=`${citas.length} registros`;
+  if(!citas.length){document.getElementById('citasTabla').innerHTML='<div class="empty"><div class="empty-icon">📋</div>No hay citas aún</div>';return;}
+  const rows=citas.slice(0,50).map(c=>{
+    const f=c.fecha?new Date(c.fecha+'T12:00:00').toLocaleDateString('es-HN',{day:'numeric',month:'short',year:'numeric'}):'—';
+    return`<tr><td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:rgba(255,255,255,0.4)">${f}</td><td>${c.hora_inicio?.slice(0,5)||'—'} - ${c.hora_fin?.slice(0,5)||'—'}</td><td>${c.servicios?.nombre||'—'}</td><td>${c.clientes?.nombre||'—'}</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,0.3)">${c.clientes?.whatsapp||'—'}</td><td><span class="badge ${c.estado}">${c.estado?.replace('_',' ')||'—'}</span></td></tr>`;
   }).join('');
-  document.getElementById('citasTabla').innerHTML = `<table>
-    <thead><tr><th>Fecha</th><th>Hora</th><th>Servicio</th><th>Cliente</th><th>WhatsApp</th><th>Estado</th></tr></thead>
-    <tbody>${rows}</tbody>
-  </table>`;
+  document.getElementById('citasTabla').innerHTML=`<table><thead><tr><th>Fecha</th><th>Hora</th><th>Servicio</th><th>Cliente</th><th>WhatsApp</th><th>Estado</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
-// ─── CLIENTES ─────────────────────────────────────────────────
-function renderClientes() {
-  if(!clientes.length) {
-    document.getElementById('clientesGrid').innerHTML = '<div class="empty"><div class="empty-icon">👤</div>No hay clientes registrados aún</div>';
-    return;
-  }
-  document.getElementById('clientesGrid').innerHTML = clientes.map(cl => {
-    const citasCl = citas.filter(c=>c.cliente_id===cl.id);
-    const ultima = citasCl[0]?.fecha ? new Date(citasCl[0].fecha+'T12:00:00').toLocaleDateString('es-HN',{day:'numeric',month:'short'}) : '—';
-    return `<div class="cliente-card">
-      <div class="cliente-nombre">${cl.nombre}</div>
-      <div class="cliente-wa">${cl.whatsapp}</div>
-      <div class="cliente-stats">
-        <div class="cliente-stat"><span>${citasCl.length}</span>Citas</div>
-        <div class="cliente-stat"><span>${ultima}</span>Última visita</div>
-      </div>
-    </div>`;
+function renderClientes(){
+  if(!clientes.length){document.getElementById('clientesGrid').innerHTML='<div class="empty"><div class="empty-icon">👤</div>No hay clientes aún</div>';return;}
+  document.getElementById('clientesGrid').innerHTML=clientes.map(cl=>{
+    const citasCl=citas.filter(c=>c.cliente_id===cl.id);
+    const ultima=citasCl[0]?.fecha?new Date(citasCl[0].fecha+'T12:00:00').toLocaleDateString('es-HN',{day:'numeric',month:'short'}):'—';
+    return`<div class="cliente-card"><div class="cliente-nombre">${cl.nombre}</div><div class="cliente-wa">${cl.whatsapp}</div><div class="cliente-stats"><div class="cliente-stat"><span>${citasCl.length}</span>Citas</div><div class="cliente-stat"><span>${ultima}</span>Última visita</div></div></div>`;
   }).join('');
 }
 
-// ─── ANALYTICS ────────────────────────────────────────────────
-function renderAnalytics() {
-  // Servicio estrella
-  const servCount = {};
-  citas.forEach(c => { const n = c.servicios?.nombre||'Otro'; servCount[n]=(servCount[n]||0)+1; });
-  const topServ = Object.entries(servCount).sort((a,b)=>b[1]-a[1])[0];
-  document.getElementById('anaServicio').textContent = topServ ? topServ[0] : '—';
-  document.getElementById('anaServicioSub').textContent = topServ ? `${topServ[1]} veces agendado` : 'sin datos';
+function renderAnalytics(){
+  const servCount={};
+  citas.forEach(c=>{const n=c.servicios?.nombre||'Otro';servCount[n]=(servCount[n]||0)+1;});
+  const topServ=Object.entries(servCount).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('anaServicio').textContent=topServ?topServ[0]:'—';
+  document.getElementById('anaServicioSub').textContent=topServ?`${topServ[1]} veces agendado`:'sin datos';
 
-  // Hora pico
-  const horaCount = {};
-  citas.forEach(c => { if(c.hora_inicio){ const h=c.hora_inicio.slice(0,5); horaCount[h]=(horaCount[h]||0)+1; } });
-  const topHora = Object.entries(horaCount).sort((a,b)=>b[1]-a[1])[0];
-  document.getElementById('anaHora').textContent = topHora ? topHora[0] : '—';
+  const horaCount={};
+  citas.forEach(c=>{if(c.hora_inicio){const h=c.hora_inicio.slice(0,5);horaCount[h]=(horaCount[h]||0)+1;}});
+  const topHora=Object.entries(horaCount).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('anaHora').textContent=topHora?topHora[0]:'—';
 
-  // Día más ocupado
-  const diaCount = {0:0,1:0,2:0,3:0,4:0,5:0,6:0};
-  citas.forEach(c => { if(c.fecha){ const d=new Date(c.fecha+'T12:00:00').getDay(); diaCount[d]++; } });
-  const topDia = Object.entries(diaCount).sort((a,b)=>b[1]-a[1])[0];
-  document.getElementById('anaDia').textContent = topDia ? DIAS[topDia[0]] : '—';
+  const diaCount={0:0,1:0,2:0,3:0,4:0,5:0,6:0};
+  citas.forEach(c=>{if(c.fecha){const d=new Date(c.fecha+'T12:00:00').getDay();diaCount[d]++;}});
+  const topDia=Object.entries(diaCount).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('anaDia').textContent=topDia?DIAS[topDia[0]]:'—';
 
-  // Chart días semana
-  const diasLabels = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-  buildChart('chartDiaSemana','bar', diasLabels,
-    [{ label:'Citas', data: Object.values(diaCount), backgroundColor: Object.keys(diaCount).map(d=>d==='1'||d==='2'||d==='3'||d==='4'||d==='5'?'rgba(201,168,76,0.7)':'rgba(100,100,100,0.3)'), borderRadius:6 }]);
+  buildChart('chartDiaSemana','bar',['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],[{label:'Citas',data:Object.values(diaCount),backgroundColor:Object.keys(diaCount).map(d=>['1','2','3','4','5','6'].includes(d)?'rgba(255,107,53,0.65)':'rgba(255,255,255,0.1)'),borderRadius:6}]);
 
-  // Recurrentes
-  const recurrentes = clientes.filter(cl => citas.filter(c=>c.cliente_id===cl.id).length > 1).length;
-  document.getElementById('anaRecurrentes').textContent = recurrentes;
-
-  // No-show
-  const noShow = citas.filter(c=>c.estado==='no_asistio').length;
-  const totalC = citas.length;
-  document.getElementById('anaNoShow').textContent = totalC ? Math.round(noShow/totalC*100)+'%' : '0%';
+  const recurrentes=clientes.filter(cl=>citas.filter(c=>c.cliente_id===cl.id).length>1).length;
+  document.getElementById('anaRecurrentes').textContent=recurrentes;
+  const noShow=citas.filter(c=>c.estado==='no_asistio').length;
+  document.getElementById('anaNoShow').textContent=citas.length?Math.round(noShow/citas.length*100)+'%':'0%';
 }
 
-// ─── NAV ──────────────────────────────────────────────────────
-const tabTitles = {
-  resumen: ['Resumen del negocio','Vista general de tu barbería'],
-  agenda: ['Agenda semanal','Citas de la semana actual'],
-  citas: ['Todas las citas','Historial completo de reservaciones'],
-  clientes: ['Clientes','Base de datos de clientes registrados'],
-  analytics: ['Analytics','Insights y métricas de tu negocio'],
-};
+const tabTitles={resumen:['Resumen del negocio','Vista general de tu barbería'],agenda:['Agenda semanal','Citas de la semana actual'],citas:['Todas las citas','Historial completo de reservaciones'],clientes:['Clientes','Base de datos de clientes'],analytics:['Analytics','Insights y métricas de tu negocio']};
 
-function showTab(id) {
+function showTab(id,el){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('panel-'+id).classList.add('active');
-  event.currentTarget.classList.add('active');
-  const [title, sub] = tabTitles[id];
-  document.getElementById('pageTitle').textContent = title;
-  document.getElementById('pageSub').textContent = sub;
+  el.classList.add('active');
+  const[title,sub]=tabTitles[id];
+  document.getElementById('pageTitle').textContent=title;
+  document.getElementById('pageSub').textContent=sub;
 }
 
-async function cargarTodo() {
-  document.getElementById('dbStatus').textContent = 'Actualizando...';
+async function cargarTodo(){
+  document.getElementById('dbStatus').textContent='Actualizando...';
   document.getElementById('dbDot').classList.remove('on');
   await init();
 }
 
-// ─── ARRANQUE ─────────────────────────────────────────────────
 init();
 </script>
 </body>
