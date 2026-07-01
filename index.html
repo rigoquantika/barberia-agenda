@@ -41,7 +41,7 @@ body{
   content:'';
   position:absolute;
   inset:0;
-  background:linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.88) 40%, rgba(0,0,0,0.97) 100%);
+  background:linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.82) 100%);
 }
 
 /* CONTENIDO */
@@ -128,8 +128,9 @@ body{
   background:var(--surface);
   backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
   border:1.5px solid var(--borde);
-  border-radius:16px;padding:16px;
+  border-radius:16px;padding:20px 14px;
   cursor:pointer;transition:all 0.2s;position:relative;
+  display:flex;flex-direction:column;align-items:center;text-align:center;
 }
 .servicio-card:hover{border-color:var(--borde-naranja);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3);}
 .servicio-card.selected{border-color:var(--naranja);background:rgba(255,107,53,0.1);}
@@ -139,9 +140,9 @@ body{
   border-radius:50%;font-size:11px;font-weight:700;
   display:flex;align-items:center;justify-content:center;
 }
-.serv-emoji{font-size:24px;margin-bottom:8px;}
-.serv-nombre{font-size:13px;font-weight:700;color:white;margin-bottom:3px;}
-.serv-detalle{font-size:11px;color:var(--gris);margin-bottom:8px;}
+.serv-emoji{display:none;}
+.serv-nombre{font-size:16px;font-weight:800;color:white;margin-bottom:6px;text-align:center;}
+.serv-detalle{font-size:12px;color:var(--gris);margin-bottom:10px;text-align:center;line-height:1.4;}
 .serv-badge{
   display:inline-flex;align-items:center;gap:3px;
   font-size:11px;color:var(--naranja);
